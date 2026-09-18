@@ -1,0 +1,26 @@
+# environment.yml - pinned analysis environment
+# Pinned versions:
+#   python 3.12.2 (conda-forge) | numpy 2.5.1 | pandas 3.0.0 | sklearn 1.8.0
+# Machine-generated full exports:
+#   environment_full_base_export.yml     (conda env export --no-builds, base env)
+#   requirements_pip_freeze_full.txt     (pip freeze)
+# IMPORTANT: single-threaded BLAS is required for reproducibility:
+#   export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+name: tnsre
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12.2
+  - numpy=2.5.1
+  - pandas=3.0.0
+  - scikit-learn=1.8.0
+  - scipy
+  - joblib=1.5.3
+  - matplotlib=3.10.3
+  - networkx
+  - seaborn=0.13.2
+  - tqdm
+  - pyarrow
+  - pip
+  - pip:
+      - bctpy==0.6.1

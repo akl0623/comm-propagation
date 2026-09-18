@@ -1,0 +1,10 @@
+{
+  "alpha_grid": "logspace(-6, 1, 15)",
+  "l1_ratio_grid": [0.05, 0.10, 0.25, 0.50, 0.75, 0.90, 0.95, 1.0],
+  "random_state": 42,
+  "outer_folds": 5,
+  "outer_repeats": 5,
+  "inner_folds": 5,
+  "_cv_spec": "Outer: 5 repeats x 5 folds, grouped by stimulation seed ROI (seed_roi), fixed frozen manifest (taskC_primary_fold_manifest_C0R2D_v2.csv); repeat seeds 20260727-20260731. Inner: GroupKFold(5) by seed_roi for hyperparameter selection. ElasticNet: fit_intercept=True, max_iter=200000, tol=1e-8, selection=cyclic, random_state=42. Preprocessing: train-fold-only SimpleImputer(median) -> VarianceThreshold(0) -> StandardScaler.",
+  "_bootstrap": "Task C family: n_boot=10000, boot_seed=8769577528861415417, seed-cluster paired bootstrap; Task A: n_boot=5000 seed 20260729; permutation: n_perm=1000 Freedman-Lane within (seed, repeat) strata; per-cell path-sampling seeds: SHA256(global_seed=20260730 || sample_id)[:8]."
+}

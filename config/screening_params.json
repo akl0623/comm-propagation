@@ -1,0 +1,9 @@
+{
+  "variance_threshold": 0.4154928088,
+  "ddvs_jaccard": 0.80,
+  "ksel": 128,
+  "sc_density": 0.25,
+  "path_sample_per_cell": 512,
+  "temporal_bin_ms": 1,
+  "_screening_notes": "B1 same-hemisphere; B2 velocity bounds [1,80] m/s (relaxed [1,150] m/s); B4 mean path SC >= 40th percentile (0.012645 frozen constant); B5 DDVS variance (S10 threshold above); B6 nav/rout ratio [0.1,10]; support rules: L1 >= 1 path, L2+ >= 5 paths (pre-DDVS counts)."
+}

@@ -1,0 +1,13 @@
+# requirements.txt - pinned dependency versions
+# NOTE: numpy here is 2.5.1 (the pinned experiment version).
+numpy==2.5.1
+pandas==3.0.0
+scikit-learn==1.8.0
+scipy
+joblib==1.5.3
+matplotlib==3.10.3
+networkx
+seaborn==0.13.2
+tqdm
+pyarrow
+bctpy==0.6.1
