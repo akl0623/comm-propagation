@@ -14,7 +14,7 @@ region_to_idx = {region: idx for idx, region in enumerate(regions)}
 # 定义时间轴和响应期
 time = np.linspace(-300, 700, 1001)
 baseline_mask = (time >= -300) & (time <= -50)
-response_mask = (time >= 0) & (time <= 100)  
+response_mask = (time >= 0) & (time <= 100)  # response window [0, 100] ms
 
 def process_ccep_per_trial(data):
     """对每个trial和每个通道单独处理，不进行trial平均"""

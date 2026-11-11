@@ -1,4 +1,3 @@
-"""P0 — Legacy exact path generator. Reproduces find pathway.py behavior."""
 import numpy as np
 from collections import defaultdict
 

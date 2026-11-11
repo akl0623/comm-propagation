@@ -1,4 +1,3 @@
-"""P1 DAG engine — strict full-precision latency, corrected symmetric SC."""
 import numpy as np, hashlib, random
 from collections import defaultdict
 from functools import lru_cache

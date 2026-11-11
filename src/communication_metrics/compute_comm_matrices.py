@@ -1,21 +1,4 @@
 #!/usr/bin/env python3
-"""
-Communication matrices at 0.20 / 0.30 SC density.
-
-Formulas follow the reference implementation in this package
-(`legacy_count_communication_measure.py`):
-  - navigation_efficiency: greedy distance-guided walk on the LENGTH matrix
-  - rout_efficiency:       bct.rout_efficiency(L, transform=None)
-  - search_information:    bct semantics, S (strength), transform='log'
-                           (local port with numpy-2 scalar fix; bct 0.6.0's
-                           retrieve_shortest_path returns a (k,1) column and
-                           numpy>=2 then fancy-indexes T into arrays — the
-                           port flattens the path to scalars, semantics
-                           unchanged)
-  - communicability:       expm(D^-1/2 S D^-1/2)
-The 0.25 anchor is recomputed with the same code and compared at 6 decimal
-places against the reference CSVs.
-"""
 import csv
 import hashlib
 import os
@@ -44,7 +27,7 @@ os.makedirs(OUTDIR, exist_ok=True)
 N = 360
 
 
-# ═══════════════════════════════════════ formula: navigation (length matrix)
+# ═══════════════════════════════════════ verbatim: navigation (length matrix)
 def navigation_efficiency(L, D, max_hops=None):
     N_ = L.shape[0]
     if max_hops is None:
@@ -83,7 +66,7 @@ def navigation_efficiency(L, D, max_hops=None):
     return E
 
 
-# ═══════════════════════════════════════ formula: communicability (strength)
+# ═══════════════════════════════════════ verbatim: communicability (strength)
 def calculate_cmy(W):
     N_ = W.shape[0]
     s = np.sum(W, axis=1)

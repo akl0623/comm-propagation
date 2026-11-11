@@ -1,4 +1,3 @@
-"""P1 — Corrected time-ordered SC candidate chain generator."""
 import numpy as np
 from collections import defaultdict
 

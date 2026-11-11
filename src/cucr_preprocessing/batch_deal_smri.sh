@@ -1,9 +1,4 @@
 #!/bin/bash
-
-# 自动处理sub-02到sub-36的受试者数据
-# 需要修改的变量用$subject_id代替
-
-# 设置变量
 MNI_TEMPLATE="MNI152_T1_1mm.nii.gz"  # MNI模板文件
 HCP_ANNOT_LH="lh.HCP-MMP1.annot"      # 左侧HCP注释文件
 HCP_ANNOT_RH="rh.HCP-MMP1.annot"      # 右侧HCP注释文件

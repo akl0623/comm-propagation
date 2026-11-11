@@ -1,0 +1,143 @@
+{
+  "purpose": "Maps the revised manuscript analyses to the included source; not a preregistration record",
+  "primary_prediction": {
+    "entry": "scripts/run_main_prediction.py",
+    "support_threshold": 0.41549280879846406,
+    "minimum_paths_one_step": 1,
+    "minimum_paths_multi_step": 5,
+    "sampled_paths_per_cell": 512,
+    "screen_attrition_input": "iterative_combined_screen_v1/smoke_test/ROUND2/S10_attrition.csv",
+    "selected_hyperparameters_input": "iterative_combined_screen_v1/full_experiment/S10/taskC/INNER_HYPERPARAMETERS.csv",
+    "held_out_predictions": "iterative_combined_screen_v1/full_experiment/S10/taskC/OOF_PREDICTIONS.parquet",
+    "fold_manifest": "frozen_s0/bridge_inputs/taskC_primary_fold_manifest_C0R2D_v2.csv",
+    "five_repeats": 5,
+    "five_folds_per_repeat": 5,
+    "resampling_group": "stimulation ROI",
+    "bootstrap_resamples": 10000,
+    "models": [
+      "C4",
+      "C6",
+      "C8R"
+    ],
+    "elasticnet_grid": {
+      "alpha": "logspace(-6, 1, 15)",
+      "l1_ratio": [
+        0.05,
+        0.1,
+        0.25,
+        0.5,
+        0.75,
+        0.9,
+        0.95,
+        1.0
+      ],
+      "effective_grid": "alpha >= 1e-3 (72 cells) in the final pilot",
+      "fit_intercept": true,
+      "max_iter": 200000,
+      "tol": 1e-08,
+      "selection": "cyclic",
+      "random_state": 42
+    },
+    "preprocessing": "train-fold-only median impute -> zero-variance drop -> standardize",
+    "cluster_bootstrap_seed": 8769577528861415417
+  },
+  "threshold_sensitivity": {
+    "entry": "scripts/run_sensitivity.py",
+    "thresholds": [
+      "T30",
+      "T40",
+      "T50",
+      "T60",
+      "T70"
+    ],
+    "same_five_repeat_five_fold_protocol": true,
+    "saved_predictions": "perm_review_v1/threshold_fullcv/OOF_FULLCV_{threshold}.parquet"
+  },
+  "revised_inference": {
+    "entry": "scripts/run_linked_inference.py",
+    "statistic": "mean of repeat-pooled out-of-fold R2 differences",
+    "primary_exchange_unit": "one stimulation ROI across all repeats",
+    "permutation_draws_per_threshold": 100000,
+    "two_sided_rule": "twice smaller inclusive tail with add-one correction",
+    "family_in_submitted_manuscript": "five threshold comparisons; Holm adjustment within this family",
+    "secondary_sensitivity": "one observation across all repeats; 10000 draws; not the ROI-cluster test",
+    "implementation": "src/inference/portable_inference.py"
+  },
+  "simulation": {
+    "entry": "scripts/run_insilico.py",
+    "minimum_full_paths_per_region": 50,
+    "feature_similarity_measure": "cosine similarity to the reference; earlier CR/SI are historical",
+    "fixed_alpha": 0.242,
+    "retained_measure": "SR (cosine similarity to the reference feature vector)",
+    "historical_measures": [
+      "CR",
+      "SI"
+    ]
+  },
+  "cohort_preprocessing": {
+    "entry": "scripts/run_cucr_detection.py",
+    "baseline_ms_inclusive": [
+      -300,
+      -50
+    ],
+    "response_window_ms_inclusive": [
+      0,
+      100
+    ],
+    "detection_threshold_absolute_z_strictly_greater_than": 5
+  },
+  "anatomical_enrichment": {
+    "entry": "scripts/run_anatomical_enrichment.py",
+    "screens": [
+      "S10",
+      "S14",
+      "B4",
+      "B5"
+    ],
+    "f2_circuits": [
+      "language_arcuate",
+      "thalamocortical",
+      "motor_cortico_cortical",
+      "visual_dorsal_ventral"
+    ],
+    "whitelist_input": "screen_match_confirm_v1/config/ANATOMICAL_WHITELIST.csv",
+    "null_path_sets": 10000,
+    "pool_size_per_cell": 512,
+    "holm_family_size": 4
+  },
+  "controls": {
+    "entry": "scripts/run_controls.py",
+    "screen_level": [
+      "order_shuffle",
+      "latency_permutation",
+      "sc_rewiring",
+      "matched_random"
+    ],
+    "path_level": [
+      "SCNull",
+      "LatencyNull",
+      "OrderShuffle",
+      "EdgeShuffle",
+      "MatchedRandom",
+      "S10Path"
+    ]
+  },
+  "domain_classification": {
+    "entry": "scripts/run_domain_classification.py",
+    "feature_sets": [
+      "M1 confounder-only",
+      "M2 communication",
+      "M3 combined",
+      "M4 endpoint"
+    ],
+    "primary_classifier": "LogisticRegression(C=1.0, class_weight='balanced')",
+    "sensitivity_classifier": "RandomForestClassifier(500 trees, class_weight='balanced')",
+    "cv": "5 x 5 stratified cell-level",
+    "bootstrap_resamples": 1000
+  },
+  "target_label_mapping": {
+    "personalized": "limbic-network targets",
+    "conventional": "bilateral parahippocampal targets",
+    "control": "anatomically mixed early-sensory label rule"
+  }
+}

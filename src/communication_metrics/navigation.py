@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-"""Navigation efficiency metric wrapper.
-
-Exposes the navigation efficiency metric. The implementation is shared
-with `compute_comm_matrices.py` (function `navigation_efficiency`).
-This wrapper adds no logic.
-"""
 import os
 import sys
 

@@ -1,92 +1,40 @@
-# From Routing to Diffusion: Process-Aware Modeling of Stimulation-Evoked Propagation in Human SEEG Networks
+# Analysis code for the revised manuscript
 
-**Authors:** Yufei Yuan, Yinyu Lan, Simeng Wu, Xiangsen Liu, Xiao Zhang
-**Affiliation:** School of Medicine and Health, Harbin Institute of Technology
+This archive contains the analysis scripts and frozen settings referenced by the manuscript. It contains **no participant recordings or held-out predictions**. The required F-TRACT data are subject to EBRAINS access terms; CUCR recordings require permission from the original data holders. The HCP structural inputs must also be obtained separately.
 
----
+## What to run
 
-## Overview
+| Manuscript analysis | Entry point |
+|---|---|
+| Primary process-versus-endpoint prediction | `scripts/run_main_prediction.py` |
+| Full five-repeat, five-fold complexity-threshold analysis (T30–T70) | `scripts/run_sensitivity.py` (step 2) |
+| Corrected significance test on saved held-out predictions | `scripts/run_linked_inference.py` |
+| Prediction controls | `scripts/run_controls.py` |
+| Cohort/domain comparison | `scripts/run_domain_classification.py` |
+| Feature-displacement simulation | `scripts/run_insilico.py` |
+| CUCR response detection | `scripts/run_cucr_detection.py` |
+| Anatomical-circuit enrichment (Fig. 3) | `scripts/run_anatomical_enrichment.py` |
 
-This repository contains analysis code for a process-aware framework that reconstructs
-physiologically constrained candidate propagation paths from stimulation-evoked SEEG
-responses and uses a hybrid routing–diffusion communication model to characterize
-stage-wise communication dynamics.
+The enrichment entry applies Holm correction across the four F2 circuits (language/arcuate, thalamocortical, motor, visual). `PS_SCREEN=S14` selects the S14 sensitivity screen. The frozen whitelist, registries, and saved task-C outputs are authorized workspace inputs and are not bundled. The threshold entry re-runs T30–T70 under the same five-repeat × five-fold protocol; per-threshold p values are computed by the linked inference entry point.
 
-## Repository Structure
+`config/final_analysis.json` identifies the code, model support rule, cross-validation and statistical settings for the revised manuscript. The original 0-100 ms CUCR batch code retains its historical filename; the earlier 0-50 ms exploratory routine is not included.
 
-```
-├── src/
-│   ├── path_search/              # Propagation path reconstruction
-│   ├── communication_metrics/    # Four graph-theoretic communication metrics
-│   ├── features/                # Endpoint features, Legendre expansion, PCES screening
-│   ├── models/                   # Adaptive elastic-net, domain classifier
-│   ├── controls/                 # OrderShuffle, MatchedRandom, SCNull, LatencyNull
-│   ├── insilico/                 # Feature-displacement simulation, SR analysis
-│   ├── cucr_preprocessing/       # CUCR electrode co-registration and CCEP processing
-│   └── utils/                    # Cross-validation, bootstrap statistics
-├── scripts/                      # Entry-point scripts for each analysis stage
-├── config/                       # Frozen hyperparameters and screening thresholds
-├── data/                         # Data acquisition instructions (no raw data included)
-├── environment.yml               # Conda environment specification
-└── requirements.txt             # Pip freeze (fallback)
-```
-
-## Environment Setup
+Create the pinned environment using `environment.yml` and use single-threaded BLAS for numerical reproduction. With **no data**, these commands verify the package structure and the corrected statistical implementation:
 
 ```bash
-# Create conda environment
-conda env create -f environment.yml
-conda activate tnsre
-
-# Set single-threaded BLAS for reproducibility
-export OMP_NUM_THREADS=1
-export OPENBLAS_NUM_THREADS=1
-export MKL_NUM_THREADS=1
+python scripts/check_release.py
+python scripts/run_linked_inference.py --self-test
+python scripts/run_main_prediction.py --check
+python scripts/run_sensitivity.py --check
+python scripts/run_anatomical_enrichment.py --check
 ```
 
-Python 3.12.2, numpy 2.5.1, scikit-learn 1.8.0, scipy, pandas 3.0.0.
-All random seeds are fixed (random_state=42). See `config/hyperparameters.json`
-for the complete frozen hyperparameter specification.
+The revised inference implementation reproduced all five 100,000-draw threshold p values from the existing saved full-cross-validation predictions. The reported ROI-linked and observation-linked p values are produced by `src/inference/portable_inference.py` through `scripts/run_linked_inference.py`. To run it on authorized predictions, use `scripts/run_linked_inference.py --help` and supply the prediction file, stimulation-region mapping, draw count and output location. The main test shares one exchange decision per stimulation region across repeated predictions; a per-observation sensitivity option is separate. Threshold training also writes an internal 10,000-draw diagnostic; the manuscript's 100,000-draw p values come from the separate inference entry point.
 
-## Data Availability
+The data-dependent entry points accept `--execute --data-root /authorized/workspace` and require the original inputs in a writable copy of that workspace. The source archive does not distribute participant recordings or automatically update GitHub or Zenodo.
 
-This repository does **not** include raw data. The three datasets used in this study
-must be obtained separately:
+## Terminology used in the original simulation scripts
 
-### 1. F-TRACT (epilepsy cohort, group-level responses)
-- Source: EBRAINS Knowledge Graph
-- URL: https://ebrains.eu/
-- Reference: M. Jedynak et al., "F-TRACT: a probabilistic atlas of anatomo-functional
-  connectivity of the human brain (F-TRACT_P_01_v2307) [Data set]," EBRAINS, 2023.
+`personalized` denotes the two targets assigned to the **limbic** group; `conventional` denotes the left and right **parahippocampal** targets. `control` denotes seven targets selected by the historical early-sensory label rule, including nonvisual regions; it should not be read as a purely visual control group. The code maps these groups before computing the final measure, **SR** (cosine similarity to the reference feature vector). Earlier **CR/SI** outputs belong to a previous exploratory formulation and are **not** the SR analysis retained in the revised manuscript. SR describes feature-space proximity, not clinical benefit or target superiority.
 
-### 2. CUCR (clinically uninvolved cortical reference)
-- Source: Contact the authors of the original CUCR dataset
-- Reference: S. Parmigiani et al., "Simultaneous stereo-EEG and high-density scalp EEG
-  recordings to study the effects of intracerebral stimulation parameters,"
-  *Brain Stimulation*, vol. 15, no. 3, pp. 664–675, May 2022.
-
-### 3. HCP structural connectivity (group-averaged SC matrix)
-- Source: BALSA (Washington University)
-- URL: https://balsa.wustl.edu/
-- Preprocessing reference: B. Q. Rosen and E. Halgren, "A Whole-Cortex Probabilistic
-  Diffusion Tractography Connectome," *eNeuro*, vol. 8, no. 1,
-  p. ENEURO.0416-20.2020, Jan. 2021.
-
-After downloading, set the environment variable:
-```bash
-export PIPELINE_ROOT=/path/to/your/data/workspace
-```
-
-## Reproduction
-
-The entry-point scripts in `scripts/` expect `PIPELINE_ROOT` to point to a directory
-containing the downloaded datasets in the expected subdirectory structure.
-
-Key parameters are frozen in `config/`:
-- `config/hyperparameters.json`: ElasticNet grid, CV scheme, bootstrap seeds
-- `config/screening_params.json`: PCES screening thresholds (variance ≥ 0.4155,
-  DDVS Jaccard ≥ 0.80, Ksel = 128, SC density = 0.25)
-
-## License
-
-This project is licensed under the MIT License.
+`LICENSE` contains the MIT terms. The CUCR scripts depend on FSL and FreeSurfer as well as authorized recordings; see their source for input conventions.
