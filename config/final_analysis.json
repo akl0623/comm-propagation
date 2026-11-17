@@ -59,7 +59,7 @@
     "primary_exchange_unit": "one stimulation ROI across all repeats",
     "permutation_draws_per_threshold": 100000,
     "two_sided_rule": "twice smaller inclusive tail with add-one correction",
-    "family_in_submitted_manuscript": "five threshold comparisons; Holm adjustment within this family",
+    "family_in_submitted_manuscript": "five threshold comparisons are reported individually; their permutation p values are unadjusted for multiplicity",
     "secondary_sensitivity": "one observation across all repeats; 10000 draws; not the ROI-cluster test",
     "implementation": "src/inference/portable_inference.py"
   },
